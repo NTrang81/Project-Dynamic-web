@@ -12,14 +12,14 @@ async function loadLocations() {
   const response = await fetch(API_URL);
   const data = await response.json();
 
-  const results = data.results; // ✅ dit was al goed
+  const results = data.results; 
 
   console.log(results[0]);
 
   const tbody = document.querySelector("#tbody");
   tbody.innerHTML = "";
 
-  const bounds = []; // ✅ toegevoegd voor zoom
+  const bounds = []; 
 
   results.forEach(park => {
     const tr = document.createElement("tr");
@@ -43,7 +43,7 @@ async function loadLocations() {
 
     tbody.appendChild(tr);
 
-    // 📍 marker
+    
     if (park.geo_point_2d) {
       const lat = park.geo_point_2d.lat;
       const lon = park.geo_point_2d.lon;
@@ -51,11 +51,10 @@ async function loadLocations() {
       const marker = L.marker([lat, lon]).addTo(map);
       marker.bindPopup(park.nom || "Park");
 
-      bounds.push([lat, lon]); // ✅ toegevoegd
+      bounds.push([lat, lon]); 
     }
   });
 
-  // 🔍 zoom naar alle markers
   if (bounds.length > 0) {
     map.fitBounds(bounds);
   }

@@ -1,18 +1,37 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BrusselsExplorer</title>
     <link rel="stylesheet" href="style.css">
 
-    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
-<body>
 
+<body>
 <h1>Openbare parken en tuinen gelegen op het grondgebied van de Stad Brussel</h1>
+
+<div class="controls">
+
+    <input type="text" id="search" placeholder="Zoek park...">
+
+    <select id="filterType">
+        <option value="">Alle types</option>
+        <option value="Postcode">Postcode</option>
+        <option value="Gemeente">Gemeente</option>
+        <option value="Jardin">Jardin</option>
+        <option value="Parc">Parc</option>
+    </select>
+
+    <select id="sort">
+        <option value="">Sorteer</option>
+        <option value="name">Naam (A-Z)</option>
+        <option value="surface">Oppervlakte</option>
+    </select>
+</div>
 
 <table id="tabel">
     <thead>
@@ -26,12 +45,12 @@
             <th>Coördinaten</th>
         </tr>
     </thead>
-
-    <!-- 🔥 THIS MUST MATCH YOUR JS -->
     <tbody id="tbody"></tbody>
-
 </table>
 
 <div id="map"></div>
 
 <script src="script.js"></script>
+
+</body>
+</html>
