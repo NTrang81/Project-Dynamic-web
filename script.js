@@ -18,10 +18,21 @@ async function loadLocations() {
     results.foreach(park => {
         const tr = document.createElement("tr");
 
-        tr.innerHTML =
-            "<td>" + (park.nom || "Geen naam") + "</td>" +
-            "<td>" + (park.commune || "Onbekend") + "</td>";
-
+    tr.innerHTML =
+        "<td>" + (park.nom_du_parc || "Geen naam") + "</td>" +
+        "<td>" + (park.commune || "Onbekend") + "</td>" +
+        "<td>" + (park.code_postal || "-") + "</td>" +
+        "<td>" + (park.type || "-") + "</td>" +
+        "<td>" + (
+            park.superficie 
+            ? park.superficie.toLocaleString() + " m²"
+            : "-") // m² 
+        "<td>" + (park.adresse || "-") + "</td>" +
+        "<td>" + (
+            park.geo_point_2d
+            ? park.geo_point_2d.lat + ", " + park.geo_point_2d.lon
+            : "-"
+        ) + "</td>"; // for coördinaters
         tbody.appendChild(tr);
 
    
@@ -32,7 +43,7 @@ async function loadLocations() {
         const marker = L.marker([lat, lon]);
         marker.addTo(map);
 
-      marker.bindPopup(park.nom);
+      marker.bindPopup(park.nom_du_parc);
     }
   });
 }
