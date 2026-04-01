@@ -1,51 +1,64 @@
-'use strict'
+"use strict";
 
-const API_URL = "https://opendata.brussels.be/api/explore/v2.1/catalog/datasets/parcs_et_jardins_publics/records?limit=20"
+const API_URL = "https://opendata.brussels.be/api/explore/v2.1/catalog/datasets/parcs_et_jardins_publics/records?limit=20";
 
+const map = L.map("map").setView([50.85, 4.35], 11);
 
-const map = L.map('map').setView([50.85, 4.35], 11);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); //geeft de kaart achtergrond
-
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "&copy; OpenStreetMap"
+}).addTo(map);
 
 async function loadLocations() {
-    const response = await fetch(API_URL); 
-    const data = await response.json();
-    const results = data.results;
+  const response = await fetch(API_URL);
+  const data = await response.json();
 
-    const tbody = document.querySelector("#tabel tbody");
-    tbody.innerHTML = "";
+  const results = data.results; // ✅ dit was al goed
 
-    results.foreach(park => {
-        const tr = document.createElement("tr");
+  console.log(results[0]);
+
+  const tbody = document.querySelector("#tbody");
+  tbody.innerHTML = "";
+
+  const bounds = []; // ✅ toegevoegd voor zoom
+
+  results.forEach(park => {
+    const tr = document.createElement("tr");
 
     tr.innerHTML =
-        "<td>" + (park.nom_du_parc || "Geen naam") + "</td>" +
-        "<td>" + (park.commune || "Onbekend") + "</td>" +
-        "<td>" + (park.code_postal || "-") + "</td>" +
-        "<td>" + (park.type || "-") + "</td>" +
-        "<td>" + (
-            park.superficie 
-            ? park.superficie.toLocaleString() + " m²"
-            : "-") // m² 
-        "<td>" + (park.adresse || "-") + "</td>" +
-        "<td>" + (
-            park.geo_point_2d
-            ? park.geo_point_2d.lat + ", " + park.geo_point_2d.lon
-            : "-"
-        ) + "</td>"; // for coördinaters
-        tbody.appendChild(tr);
+      "<td>" + (park.nom || "Geen naam") + "</td>" +
+      "<td>" + (park.commune || "Onbekend") + "</td>" +
+      "<td>" + (park.postalcode || "-") + "</td>" +
+      "<td>" + (park.type || "-") + "</td>" +
+      "<td>" +
+        (park.surface
+          ? park.surface.toLocaleString() + " m²"
+          : "-") +
+      "</td>" +
+      "<td>" + (park.adresse || "-") + "</td>" +
+      "<td>" +
+        (park.geo_point_2d
+          ? park.geo_point_2d.lat + ", " + park.geo_point_2d.lon
+          : "-") +
+      "</td>";
 
-   
-        if(park.geo_point_2d) {
-        const lat = park.geo_point_2d.lat;
-        const lon = park.geo_point_2d.lon;
+    tbody.appendChild(tr);
 
-        const marker = L.marker([lat, lon]);
-        marker.addTo(map);
+    // 📍 marker
+    if (park.geo_point_2d) {
+      const lat = park.geo_point_2d.lat;
+      const lon = park.geo_point_2d.lon;
 
-      marker.bindPopup(park.nom_du_parc);
+      const marker = L.marker([lat, lon]).addTo(map);
+      marker.bindPopup(park.nom || "Park");
+
+      bounds.push([lat, lon]); // ✅ toegevoegd
     }
   });
+
+  // 🔍 zoom naar alle markers
+  if (bounds.length > 0) {
+    map.fitBounds(bounds);
+  }
 }
 
 loadLocations();
